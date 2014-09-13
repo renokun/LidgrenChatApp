@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
+using System.Timers;
 using Lidgren.Network;
 
 namespace LidgrenChatServer
 {
     class Program
     {
+        //private static Timer updateTimer;
         private static SortedList<Int64, String> uidNameMap = new SortedList<long, string>();
         private static NetServer server;
         private static INetEncryption algo = new NetXtea("SecretKey0101");
-        private static string adminCode = "admincode";
+        private static string adminCode = "adminpass";
         private static Random rnd = new Random();
         private static string welcomeStr = "Welcome! Please use /nick to change your nickname. " + 
             "To see a list of online users, type /list.";
@@ -43,7 +45,8 @@ namespace LidgrenChatServer
 
             while (true)
             {
-                RecieveAndSend();
+                Update();
+                System.Threading.Thread.Sleep(50);  // temp code
             }
         }
 
@@ -111,23 +114,19 @@ namespace LidgrenChatServer
                         }
                     }
                 }
-                else if (commands.Length > 2 && commands[0] == "real")
+                else if (commands.Length > 1 && commands[0] == "real")
                 {
-                    // print out all the info for this user
-                    if (commands[2] == adminCode)
+                    foreach (NetConnection connection in server.Connections)
                     {
-                        foreach (NetConnection connection in server.Connections)
+                        string nick = uidNameMap[connection.RemoteUniqueIdentifier];
+                        if (nick == commands[1])
                         {
-                            string nick = uidNameMap[connection.RemoteUniqueIdentifier];
-                            if (nick == commands[1])
-                            {
-                                messageToSender += "===== QUERY RESULT =====" + Environment.NewLine +
-                                    "UID: " + connection.RemoteUniqueIdentifier + Environment.NewLine +
-                                    "Nick: " + nick + Environment.NewLine +
-                                    "IP: " + connection.RemoteEndpoint.Address + Environment.NewLine +
-                                    "Port: " + connection.RemoteEndpoint.Port + Environment.NewLine +
-                                    "===== END OF RESULT =====" + Environment.NewLine;
-                            }
+                            messageToSender += "===== QUERY RESULT =====" + Environment.NewLine +
+                                "UID: " + connection.RemoteUniqueIdentifier + Environment.NewLine +
+                                "Nick: " + nick + Environment.NewLine +
+                                "IP: " + connection.RemoteEndpoint.Address + Environment.NewLine +
+                                "Port: " + connection.RemoteEndpoint.Port + Environment.NewLine +
+                                "===== END OF RESULT =====" + Environment.NewLine;
                         }
                     }
                 }
@@ -140,7 +139,7 @@ namespace LidgrenChatServer
                         messageToSender += uid + ": " + uidNameMap[uid] + Environment.NewLine;
                     }
                     messageToSender += "TOTAL: " + server.ConnectionsCount + Environment.NewLine +
-                        "===== END OF RESULT =====" + Environment.NewLine;
+                        "===== END OF QUERY =====" + Environment.NewLine;
                 }
 
                 // send a message to sender, if messageToSender is not empty
@@ -161,7 +160,7 @@ namespace LidgrenChatServer
             }
         }
 
-        static void RecieveAndSend()
+        static void Update()
         {
             string serverStringBuffer = String.Empty;
             NetIncomingMessage msg;
@@ -181,17 +180,7 @@ namespace LidgrenChatServer
 
                     case NetIncomingMessageType.Data:
                         string dataString = msg.ReadString();
-                        //if (!uidNameMap.ContainsKey(senderUid))
-                        //{
-                        //    UpdateUIDMap(senderUid, msg.ReadString());
-                        //    serverStringBuffer += senderUid + 
-                        //        " (" + senderIpAddress + ")"
-                        //        + " has changed name to " + uidNameMap[senderUid] + Environment.NewLine;
-                        //}
-                        //else
-                        //{
-                        
-                        //}
+
                         if (dataString.StartsWith("/"))
                         {
                             // Don't show this message to client, but still want it in console
