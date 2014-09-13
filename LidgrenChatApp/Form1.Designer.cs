@@ -46,7 +46,7 @@
             this.txtBoxInfo.Name = "txtBoxInfo";
             this.txtBoxInfo.ReadOnly = true;
             this.txtBoxInfo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtBoxInfo.Size = new System.Drawing.Size(607, 356);
+            this.txtBoxInfo.Size = new System.Drawing.Size(607, 370);
             this.txtBoxInfo.TabIndex = 1;
             this.txtBoxInfo.TabStop = false;
             // 
@@ -55,11 +55,12 @@
             this.txtBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBoxInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtBoxInput.Location = new System.Drawing.Point(12, 374);
+            this.txtBoxInput.Location = new System.Drawing.Point(12, 388);
+            this.txtBoxInput.Multiline = true;
             this.txtBoxInput.Name = "txtBoxInput";
-            this.txtBoxInput.Size = new System.Drawing.Size(607, 27);
+            this.txtBoxInput.Size = new System.Drawing.Size(607, 38);
             this.txtBoxInput.TabIndex = 0;
-            this.txtBoxInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxInput_KeyDown);
+            this.txtBoxInput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxInput_KeyPress);
             // 
             // updateTimer
             // 
@@ -71,11 +72,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(631, 413);
+            this.ClientSize = new System.Drawing.Size(631, 438);
             this.Controls.Add(this.txtBoxInput);
             this.Controls.Add(this.txtBoxInfo);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Lidgren Chatroom";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);

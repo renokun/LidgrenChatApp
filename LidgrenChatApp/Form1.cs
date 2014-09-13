@@ -73,6 +73,8 @@ namespace LidgrenChatApp
                         break;
 
                     case NetIncomingMessageType.Data:
+                        this.WindowState = FormWindowState.Normal;
+                        this.Activate();
                         txtBoxInfo.AppendText(inMsg.ReadString());
                         break;
 
@@ -89,17 +91,21 @@ namespace LidgrenChatApp
                 txtBoxInfo.Select(0, txtBoxInfo.GetFirstCharIndexFromLine(1)); // select the first line
                 txtBoxInfo.SelectedText = "";
             }
+
+            // update status to form title
+            this.Text = client.ConnectionStatus.ToString();
         }
 
-        private void textBoxInput_KeyDown(object sender, KeyEventArgs e)
+        private void txtBoxInput_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                if (!String.IsNullOrEmpty(txtBoxInput.Text))
+                if (!String.IsNullOrWhiteSpace(txtBoxInput.Text))
                 {
                     SendStringMessage(txtBoxInput.Text);
                     txtBoxInput.Text = String.Empty;
                 }
+                e.Handled = true;
             }
         }
 
